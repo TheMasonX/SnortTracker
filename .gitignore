@@ -216,3 +216,55 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.env
+venv/
+.venv/
+
+# --- Audio data ---
+data/raw_audio/
+data/processed_audio/
+*.wav
+*.mp3
+*.flac
+
+# --- Model artifacts ---
+models/checkpoints/
+models/*.onnx
+models/*.tflite
+models/*.pt
+models/*.pth
+
+# --- Logs ---
+logs/
+*.log
+
+# --- Temporary files ---
+*.tmp
+*.cache
+.cache/
+tmp/
+temp/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Pi Zero specific ---
+# If you SCP files or use rsync, these sometimes appear:
+*.swp
+*.swo
+*.pid
+run/
