@@ -248,6 +248,26 @@ logs/
 
 # --- Temporary files ---
 *.tmp
+
+# --- Generated features ---
+*.npy
+*.npz
+features/
+processed_audio/
+*.mel
+*.mfcc
+spectrograms/
+
+# --- Notebook checkpoints ---
+.ipynb_checkpoints/
+
+# --- Data manifests (versioned copies kept in data/ instead) ---
+*.manifest.json
+
+# --- OS files ---
+.DS_Store
+Thumbs.db
+desktop.ini
 *.cache
 .cache/
 tmp/
