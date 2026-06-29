@@ -65,12 +65,19 @@ capture → cheap prefilter → classifier → event state machine → append-on
 - `extract(audio)` → (n_mels,) float32; `extract_batch(segments)` → (batch, n_mels)
 - 30 tests: Mel scale roundtrip, filterbank properties, determinism, silence, edge cases
 
-### Council Fixes Applied
-- Audio constants consolidated: `audio_contract.py` is the single source of truth; `AudioConfig` reads from it
-- Gate optimized: RMS/ZCR computed on float32 (no upcast); early exit saves 30–50% on silent windows
-- `BurstTracker` hardcoded `25.0` replaced with `WINDOW_SIZE_MS` from contract
-- `requirements.txt` created
-- Phases reordered per council consensus: product logic (state machine + CLI) built before ML pipeline
+### Phase 8 — Dataset Collection Tooling
+- `dataset/manifest.py` — CSV manifest: session tracking, label status, data splits
+- `dataset/slicer.py` — Audio window slicing per contract; annotation-based per-range labeling
+- `dataset/labeler.py` — `LabelPolicy`, `SessionSplitter` (train/val/test), manifest validation
+- `dataset/preprocessor.py` — Batch feature extraction via `FeatureExtractor`; manifest-to-arrays pipeline
+- 29 tests: manifest CRUD, CSV roundtrip, slicing, label annotations, preprocessing
+
+### Phase 9 — Model Training Infrastructure
+- `train/model.py` — `SnortCNN`: FC network 40→64→32→1 → Sigmoid (4,737 params); ONNX export
+- `train/dataset.py` — `SnortDataset` (PyTorch Dataset); `create_dataloaders()` factory
+- `train/train.py` — `Trainer` with class-weighted BCE, early stopping, checkpointing
+- `train/evaluate.py` — Event-level metrics: precision/recall/F1, FP/min, temporal matching, window→event
+- 25 tests: model architecture, forward pass, ONNX export, training smoke, metrics
 
 ---
 
@@ -100,13 +107,21 @@ SnortTracker/
 │   ├── __init__.py
 │   └── main.py                        # start, view, reset, tail, status, purge
 │
-├── dataset/                           # Dataset tooling (empty — Phase 8)
-│   └── __init__.py
+├── dataset/                           # Dataset tooling (Phase 8)
+│   ├── __init__.py
+│   ├── manifest.py                    # CSV manifest: session tracking, labels, splits
+│   ├── slicer.py                      # Audio window slicing per contract
+│   ├── labeler.py                     # Label policy, session splitter, validation
+│   └── preprocessor.py               # Batch feature extraction for training
 │
-├── train/                             # Model training (empty — Phase 9)
-│   └── __init__.py
+├── train/                             # Model training (Phase 9)
+│   ├── __init__.py
+│   ├── model.py                       # SnortCNN classifier (4.7k params) + ONNX export
+│   ├── dataset.py                     # PyTorch Dataset + DataLoader factories
+│   ├── train.py                       # Trainer: class-weighted BCE, early stopping
+│   └── evaluate.py                    # Event-level metrics: precision/recall/F1
 │
-├── tests/                             # Test suite (161 tests)
+├── tests/                             # Test suite (215 tests)
 │   ├── __init__.py
 │   ├── test_runtime_smoke.py          # 4 tests — repo structure, config loading
 │   ├── test_audio_contract.py         # 35 tests — validation, inspection, WAV, padding
@@ -115,6 +130,8 @@ SnortTracker/
 │   ├── test_state_machine.py          # 21 tests — state transitions, cooldown, gate agreement
 │   ├── test_integration.py            # 14 tests — full pipeline, classifier, config
 │   ├── test_features.py               # 30 tests — Mel utils, filterbank, extraction, batch
+│   ├── test_dataset.py                # 29 tests — manifest, slicing, labeling, preprocessing
+│   ├── test_model.py                  # 25 tests — architecture, ONNX, training, metrics
 │   └── fixtures/
 │       └── test_snorts.wav            # 2-second test WAV with snort-like bursts
 │
