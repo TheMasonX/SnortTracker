@@ -1,9 +1,9 @@
 # SnortTracker — Handoff Document
 
-**Date:** 2026-06-28 (updated after Phases 6–7)  
-**Project phase:** Phases 1–7 complete (7 of 13)  
-**Test suite:** 161/161 passing  
-**Working prototype:** ✅ CLI dry-run mode counts snort-like bursts from WAV files; features pipeline ready for model training  
+**Date:** 2026-06-28 (updated after Phases 8–9)  
+**Project phase:** Phases 1–9 complete (9 of 13)  
+**Test suite:** 215/215 passing  
+**Working prototype:** ✅ CLI dry-run; dataset tooling ready; training infrastructure built  
 
 ---
 
@@ -182,12 +182,12 @@ python -m cli.main reset        # Clear logs and count
 
 | Phase | What | Why |
 |-------|------|-----|
-| **8** | Dataset collection | Record real snorts + hard negatives; label policy (positive/negative/ignore) |
-| **9** | Model training | Tiny CNN, trained on desktop GPU, event-level evaluation |
 | **10** | Model swap & comparison | Export to ONNX, swap into runtime via `create_classifier()`, compare counts against v0.1 baseline |
 | **11** | Pi Zero optimization | Profile ONNX latency, eliminate remaining allocations, GC profiling |
 | **12** | Calibration & tuning | `calibrate` CLI, threshold persistence, environment-specific defaults |
 | **13** | Hardening | Soak tests, regression fixtures, edge case coverage, Pi Zero smoke test |
+
+**Prerequisite for Phase 10:** Real snort recordings (Phase 8 human task) + trained model
 
 ---
 

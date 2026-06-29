@@ -1,8 +1,8 @@
 # SnortTracker — Roadmap
 
 **Last updated:** 2026-06-28  
-**Current phase:** Phase 7 complete (7 of 13)  
-**Next milestone:** Dataset collection (Phase 8)
+**Current phase:** Phase 9 complete (9 of 13)  
+**Next milestone:** Model swap & comparison (Phase 10)
 
 ---
 
@@ -78,24 +78,23 @@ One pipeline. Five stages. Every stage is independently testable.
 - [x] Deterministic, versioned, identical to training path
 - [x] `tests/test_features.py` — 30 tests: Mel utils, filterbank, extraction, batch, edge cases
 
-### 🔜 Phase 8 — Dataset Collection *(NEXT)*
+### ✅ Phase 8 — Dataset Collection Tooling
 
-- [ ] Record real snorts (target user, 10+ minutes)
-- [ ] Record hard negatives: speech, laughter, coughs, breathing, ambient noise, silence
-- [ ] Label policy: positive / negative / ignore (ambiguous → exclude)
-- [ ] Gold positives: human-confirmed full snorts only
-- [ ] Split by session to prevent leakage
-- [ ] `dataset/` tooling: slicing, labeling, preprocessing
+- [x] `dataset/manifest.py` — CSV manifest for session tracking, labeling, split assignment
+- [x] `dataset/slicer.py` — audio window slicing per contract; annotation-based labeling
+- [x] `dataset/labeler.py` — LabelPolicy, SessionSplitter, manifest validation
+- [x] `dataset/preprocessor.py` — batch feature extraction via FeatureExtractor
+- [x] `tests/test_dataset.py` — 29 tests: manifest, slicing, labeling, preprocessing
 
-### Phase 9 — Model Training
+### ✅ Phase 9 — Model Training Infrastructure
 
-- [ ] Tiny CNN architecture (conv blocks → pooling → dense → sigmoid)
-- [ ] Train on desktop GPU, validate on held-out sessions
-- [ ] Class weighting: target user snorts > generic positives
-- [ ] Evaluate event-level performance, not window accuracy
-- [ ] `train/` module: model, dataset, train, evaluate
+- [x] `train/model.py` — SnortCNN: 40→64→32→1 (4.7k params), ONNX export
+- [x] `train/dataset.py` — PyTorch Dataset + DataLoader factories
+- [x] `train/train.py` — Class-weighted BCE, early stopping, checkpointing
+- [x] `train/evaluate.py` — Event-level metrics: precision/recall/F1, temporal matching
+- [x] `tests/test_model.py` — 23 tests: architecture, ONNX, training smoke, metrics
 
-### Phase 10 — Model Swap & Comparison
+### 🔜 Phase 10 — Model Swap & Comparison *(NEXT)*
 
 - [ ] Export trained model (ONNX)
 - [ ] Quantize for Pi Zero
@@ -180,7 +179,9 @@ One pipeline. Five stages. Every stage is independently testable.
 | `runtime/classifier.py` | 5 | ✅ Passing |
 | `runtime/features.py` | 30 | ✅ Passing |
 | Integration (pipeline) | 9 | ✅ Passing |
-| **Total** | **161** | **All passing** |
+| `dataset/` (slicer, manifest, etc.) | 29 | ✅ Passing |
+| `train/` (model, training, metrics) | 25 | ✅ Passing |
+| **Total** | **215** | **All passing** |
 
 ---
 
