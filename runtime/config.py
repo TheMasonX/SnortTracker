@@ -4,29 +4,46 @@ Shared configuration for the SnortTracker runtime.
 All tunable parameters live here so training and inference
 can be kept consistent.  Update this file deliberately and
 version it alongside model exports.
+
+Immutable audio constants are defined in ``runtime.audio_contract``
+(the single source of truth).  ``AudioConfig`` wraps them as a
+convenience dataclass.
 """
 
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from runtime.audio_contract import (
+    DTYPE_STR,
+    HOP_SAMPLES,
+    HOP_SIZE_MS,
+    SAMPLE_RATE,
+    WINDOW_SAMPLES,
+    WINDOW_SIZE_MS,
+)
+
 
 @dataclass
 class AudioConfig:
-    """Audio capture and preprocessing settings."""
+    """Audio capture and preprocessing settings.
 
-    sample_rate: int = 16000          # Hz
-    channels: int = 1                 # mono
-    window_size_ms: int = 25          # ms per analysis window
-    hop_size_ms: int = 10             # ms stride between windows
-    dtype: str = "float32"            # internal numeric type
+    Defaults are read from ``runtime.audio_contract`` — the single
+    source of truth for all audio constants.
+    """
+
+    sample_rate: int = SAMPLE_RATE
+    channels: int = 1
+    window_size_ms: int = WINDOW_SIZE_MS
+    hop_size_ms: int = HOP_SIZE_MS
+    dtype: str = DTYPE_STR
 
     @property
     def window_samples(self) -> int:
-        return int(self.sample_rate * self.window_size_ms / 1000)
+        return WINDOW_SAMPLES
 
     @property
     def hop_samples(self) -> int:
-        return int(self.sample_rate * self.hop_size_ms / 1000)
+        return HOP_SAMPLES
 
 
 @dataclass

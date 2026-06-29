@@ -30,6 +30,7 @@ import numpy as np
 SAMPLE_RATE: int = 16000          # Hz — everything uses 16 kHz
 CHANNELS: int = 1                 # mono only
 DTYPE = np.float32                # internal numeric type
+DTYPE_STR: str = "float32"        # string form for serialization
 AMPLITUDE_RANGE: tuple[float, float] = (-1.0, 1.0)
 
 WINDOW_SIZE_MS: int = 25          # analysis window duration

@@ -52,8 +52,46 @@ python -m cli.main view       # Show current count
 python -m cli.main reset      # Clear count and logs
 python -m cli.main tail       # Show recent events
 python -m cli.main status     # Show runtime health
-python -m cli.main calibrate  # Run calibration mode
+python -m cli.main purge        # Wipe all logs (with confirmation)
 ```
+
+## Privacy
+
+SnortTracker is **local-first and offline**. It never sends data over the network.
+
+### What Data Is Stored
+
+| Data | Location | Format | Retention |
+|------|----------|--------|-----------|
+| Snort event log | `logs/snort_events.log` | CSV: `UTC_timestamp, event_id=N, confidence=X, model=NAME, config=VERSION` | 30 days (auto-rotated) |
+| Rotated archives | `logs/snort_events.YYYYMMDDTHHMMSS.log` | Same CSV format as main log | Manual purge only |
+| Raw audio | **Not stored** | — | In-memory only; discarded after processing |
+
+### How to Purge All Data
+
+```bash
+# Interactive (asks for confirmation)
+python -m cli.main purge
+
+# Non-interactive (scripts / automation)
+python -m cli.main purge --yes
+```
+
+This deletes the main event log, all rotated archives, and resets the in-memory count.
+
+### What Never Leaves the Device
+
+- No telemetry
+- No cloud sync
+- No analytics
+- No network code in the runtime pipeline
+- Raw audio is never written to disk during normal operation
+
+### Audio Capture
+
+- The microphone captures only the audio needed for real-time snort detection
+- Audio is held in a short ring buffer (default 5 seconds) and discarded after processing
+- No continuous recording or archiving of ambient audio
 
 ## Design Principles
 
